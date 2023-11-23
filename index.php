@@ -35,7 +35,7 @@ function ProcessWords(string $path): void
             continue;
         }
 
-        $words = preg_split("/[\d\n\r\s,?.!;()+-=]+/", $words, 0, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split("/[\d\n\r\s,?.!;()+-=*]+/", $words, 0, PREG_SPLIT_NO_EMPTY);
 
         foreach ($words as $word) {
             if (!$currentLetter || $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
