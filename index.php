@@ -16,7 +16,7 @@ if (isCommandLineInterface()) {
 
 function ProcessWords(string $path): void
 {
-    $path = trim($path, '"');
+    $path = trim($path, '"' . "'");
     if (file_exists($path) && is_file($path)) {
         $file = fopen($path, 'r');
     } else {
