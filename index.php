@@ -8,7 +8,7 @@ if (isCommandLineInterface()) {
 } else {
     require_once('src/fileupload.php');
     if ($_FILES) {
-        ProcessWords('src/uploads' . DIRECTORY_SEPARATOR . end($_FILES)['name']);
+        ProcessWords('src' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . end($_FILES)['name']);
         ConnectDBAndPush();
     }
 }
@@ -16,28 +16,40 @@ if (isCommandLineInterface()) {
 
 function ProcessWords(string $path): void
 {
-    $file = fopen($path, 'r');
+    $path = trim($path, '"');
+    if (file_exists($path) && is_file($path)) {
+        $file = fopen($path, 'r');
+    } else {
+        echo 'Файла по заданному пути не существует.';
+        exit();
+    }
+
 
     $currentLetter = '';
     $dir = '';
-    $data = true;
+    $data = fgets($file);
 
     mb_detect_order(['CP1251','CP1252','IBM866','UTF-8']);
 
     while ($data !== false) {
-        $data = fgets($file);
-        if (mb_detect_encoding($data) != mb_internal_encoding()) {
-            $words = trim(iconv(mb_detect_encoding($data), mb_internal_encoding(), $data));
-        } else {
-            $words = trim($data);
-        }
-        if ($words == '') {
+        if (trim($data) == '') {
+            $data = fgets($file);
             continue;
         }
 
-        $words = preg_split("/[\d\n\r\s,?.!;()+-=*]+/", $words, 0, PREG_SPLIT_NO_EMPTY);
+        if (mb_detect_encoding($data) != mb_internal_encoding()) {
+            $text = trim(iconv(mb_detect_encoding($data), mb_internal_encoding(), $data));
+        } else {
+            $text = trim($data);
+        }
+
+        $words = preg_split('/[\d\n\r\s,?.!;()+-=*>"]+/', $text, 0, PREG_SPLIT_NO_EMPTY);
 
         foreach ($words as $word) {
+            if (isset($libCounter) && isset($counter) && $currentLetter && $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
+                rewind($libCounter);
+                fwrite($libCounter, $counter);
+            }
             if (!$currentLetter || $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
                 if (isset($libPage) && isset($libCounter)) {
                     fclose($libPage);
@@ -57,9 +69,8 @@ function ProcessWords(string $path): void
 
             fwrite($libPage, $word . "\r\n");
             $counter += mb_substr_count(mb_strtolower($word), $currentLetter);
-            rewind($libCounter);
-            fwrite($libCounter, $counter);
         }
+        $data = fgets($file);
     }
     rewind($libCounter);
     fwrite($libCounter, $counter);
