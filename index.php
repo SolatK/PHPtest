@@ -1,13 +1,13 @@
 <?php
 require_once('push.php');
 
-if(isCommandLineInterface()) {
+if (isCommandLineInterface()) {
     $path = readline('Введите путь до файла: ');
     ProcessWords($path);
     ConnectDBAndPush();
 } else {
     require_once('src/fileupload.php');
-    if($_FILES) {
+    if ($_FILES) {
         ProcessWords('src/uploads' . DIRECTORY_SEPARATOR . end($_FILES)['name']);
         ConnectDBAndPush();
     }
@@ -29,6 +29,10 @@ function ProcessWords(string $path): void
         if ($word == '') {
             continue;
         }
+        if (isset($libCounter) && isset($counter) && $currentLetter && $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
+            rewind($libCounter);
+            fwrite($libCounter, $counter);
+        }
 
         if (!$currentLetter || $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
             if (isset($libPage) && isset($libCounter)) {
@@ -49,9 +53,9 @@ function ProcessWords(string $path): void
 
         fwrite($libPage, $word . "\r\n");
         $counter += mb_substr_count(mb_strtolower($word), $currentLetter);
-        rewind($libCounter);
-        fwrite($libCounter, $counter);
     }
+    rewind($libCounter);
+    fwrite($libCounter, $counter);
 }
 
 function isCommandLineInterface()
