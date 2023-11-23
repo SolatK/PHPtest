@@ -18,7 +18,7 @@ if ($_FILES && $_FILES["filename"]["error"]== UPLOAD_ERR_OK)
 ?>
 <h2>Загрузка файла</h2>
 <form method="post" enctype="multipart/form-data" action="">
-Выберите файл: <input type="file" name="filename" size="10000" /><br /><br />
+Выберите файл: <input type="file" name="filename" size="100000" /><br /><br />
 <input type="submit" value="Загрузить" />
 </form>
 </body>
