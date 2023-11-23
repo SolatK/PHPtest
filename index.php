@@ -72,8 +72,10 @@ function ProcessWords(string $path): void
         }
         $data = fgets($file);
     }
-    rewind($libCounter);
-    fwrite($libCounter, $counter);
+    if(isset($libCounter)) {
+        rewind($libCounter);
+        fwrite($libCounter, $counter);
+    }
 }
 
 function isCommandLineInterface()
