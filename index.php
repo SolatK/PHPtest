@@ -43,7 +43,7 @@ function ProcessWords(string $path): void
             $text = trim($data);
         }
 
-        $words = preg_split('/[\d\n\r\s,?.!;()+-=*>"]+/', $text, 0, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split('(/[А-Яа-я]+-?[А-Яа-я]*/)', $text, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
 
         foreach ($words as $word) {
             if (isset($libCounter) && isset($counter) && $currentLetter && $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
