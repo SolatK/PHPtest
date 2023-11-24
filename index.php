@@ -44,7 +44,7 @@ function ProcessWords(string $path): void
         }
         $words = [];
 
-        preg_match_all('/[А-Яа-яЁёЬь]+-?[А-Яа-яЁёЬь]*/u', $text, $words);
+        preg_match_all('/[А-Яа-яЁёЬь]+[-?А-Яа-яЁёЬь]*/u', $text, $words);
 
         foreach ($words[0] as $word) {
             if (isset($libCounter) && isset($counter) && $currentLetter && $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
