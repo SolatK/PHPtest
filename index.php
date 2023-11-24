@@ -42,10 +42,11 @@ function ProcessWords(string $path): void
         } else {
             $text = trim($data);
         }
+        $words = [];
 
-        $words = preg_split('(/[А-Яа-я]+-?[А-Яа-я]*/)', $text, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+        preg_match_all('/[А-Яа-яЁёЬь]+-?[А-Яа-яЁёЬь]*/u', $text, $words);
 
-        foreach ($words as $word) {
+        foreach ($words[0] as $word) {
             if (isset($libCounter) && isset($counter) && $currentLetter && $currentLetter != mb_strtolower(mb_substr($word, 0, 1))) {
                 rewind($libCounter);
                 fwrite($libCounter, $counter);
