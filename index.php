@@ -27,11 +27,12 @@ function ProcessWords(string $path): void
 
     $currentLetter = '';
     $dir = '';
-    $data = fgets($file);
+    
 
     mb_detect_order(['CP1251','CP1252','IBM866','UTF-8']);
 
-    while ($data !== false) {
+    do {
+        $data = fgets($file);
         if (trim($data) == '') {
             $data = fgets($file);
             continue;
@@ -71,8 +72,8 @@ function ProcessWords(string $path): void
             fwrite($libPage, $word . "\r\n");
             $counter += mb_substr_count(mb_strtolower($word), $currentLetter);
         }
-        $data = fgets($file);
-    }
+
+    } while ($data !== false);
     if(isset($libCounter)) {
         rewind($libCounter);
         fwrite($libCounter, $counter);
